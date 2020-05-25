@@ -21,7 +21,7 @@ public class MicrophoneInput : MonoBehaviour
 
     [Header("Settings")]
     public float scaleFactor = 2.0f;
-    public int spectrumIndex = 16;
+    public int spectrumIndex = 14;
 
     
 
