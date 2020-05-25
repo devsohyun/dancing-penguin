@@ -21,7 +21,7 @@ public class MicrophoneInput : MonoBehaviour
 
     [Header("Settings")]
     public float scaleFactor = 2.0f;
-    public int targetIndex = 16;
+    public int spectrumIndex = 16;
 
     
 
@@ -89,7 +89,7 @@ public class MicrophoneInput : MonoBehaviour
                 // Debug.DrawLine(new Vector3(Mathf.Log(i - 1), Mathf.Log(spectrum[i - 1]), 3), new Vector3(Mathf.Log(i), Mathf.Log(spectrum[i]), 3), Color.blue);
             }
             
-            penguin.transform.localScale = new Vector3(4.0f,  Mathf.Abs(Mathf.Log(spectrum[targetIndex]))*scaleFactor, 4);
+            penguin.transform.localScale = new Vector3(4.0f,  Mathf.Abs(Mathf.Log(spectrum[spectrumIndex]))*scaleFactor, 4);
         }
         
     }
