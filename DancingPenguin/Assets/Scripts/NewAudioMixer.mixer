@@ -66,7 +66,8 @@ AudioMixerSnapshotController:
   m_Name: Snapshot
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: 345353723df693f40a072ce4e364a32d
-  m_FloatValues: {}
+  m_FloatValues:
+    520deb56a0172ea4893b2a0d03992458: -80
   m_TransitionOverrides: {}
 --- !u!243 &5006057614644344960
 AudioMixerGroupController:
@@ -74,7 +75,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Group
+  m_Name: MicrophoneGroup
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: efd8bfaee7d5d5849bde68e7928cf817
   m_Children: []
