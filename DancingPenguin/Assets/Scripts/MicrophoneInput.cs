@@ -6,7 +6,7 @@ using UnityEngine.Audio;
 [RequireComponent (typeof(AudioSource))]
 public class MicrophoneInput : MonoBehaviour
 {
-    
+    [Header("Audio")]
     AudioSource audioSource;
     
     //Microphone Input
@@ -17,23 +17,14 @@ public class MicrophoneInput : MonoBehaviour
     public string microphone;
     public AudioMixerGroup mixerGroupMicrophone, mixerGroupMaster;   
 
-    //Buffer
-    
-    public static float[] freqBand = new float[64];
-    public static float[] bandBuffer = new float[64];
+    [Header("Buffer")]
+    public float[] freqBand = new float[64];
+    public float[] bandBuffer = new float[64];
     private float[] bufferDecrease = new float[64]; 
-    public bool useBuffer;
-    public int band;
-
-
-    public GameObject box;
-    public GameObject penguin;
 
     [Header("Settings")]
-    public float scaleFactor = 2.0f;
-    
-    public int spectrumIndex = 14;
-
+    public float bufferDecreaseValue = 0.005f;
+    public float bufferDecreaseMultiplier = 1.05f;
     
 
     // Start is called before the first frame update
@@ -49,7 +40,6 @@ public class MicrophoneInput : MonoBehaviour
                 microphone = device;
             }
         }
-        
 
         //find devices microphone name 
         foreach (var device in Microphone.devices)
@@ -78,68 +68,41 @@ public class MicrophoneInput : MonoBehaviour
             audioSource.clip = audioClip;
             audioSource.outputAudioMixerGroup = mixerGroupMaster; //when sounds makes no eco from me
         }
-    
-     audioSource.Play();
+        audioSource.Play();
     }
 
-    void Update()
+    void FixedUpdate()
     {
+        getAudioData();
+        BandBuffer();
+    }
+
+    void getAudioData(){
         if(audioSource != null){
-            
-            float[] spectrum = new float[64];
-
-            audioSource.GetSpectrumData(spectrum, 0, FFTWindow.Rectangular);
-
-            for (int i = 1; i < spectrum.Length - 1; i++)
+            audioSource.GetSpectrumData(freqBand, 0, FFTWindow.Rectangular);
+            for (int i = 1; i < freqBand.Length - 1; i++)
             {
                 // Debug.DrawLine(new Vector3(i - 1, spectrum[i] + 10, 0), new Vector3(i, spectrum[i + 1] + 10, 0), Color.red);
                 // Debug.DrawLine(new Vector3(i - 1, Mathf.Log(spectrum[i - 1]) + 10, 2), new Vector3(i, Mathf.Log(spectrum[i]) + 10, 2), Color.cyan);
                 // Debug.DrawLine(new Vector3(Mathf.Log(i - 1), spectrum[i - 1] - 10, 1), new Vector3(Mathf.Log(i), spectrum[i] - 10, 1), Color.green);
                 // Debug.DrawLine(new Vector3(Mathf.Log(i - 1), Mathf.Log(spectrum[i - 1]), 3), new Vector3(Mathf.Log(i), Mathf.Log(spectrum[i]), 3), Color.blue);
             }
-
-            penguin.transform.localScale = new Vector3(2.0f, Mathf.Abs(Mathf.Log(spectrum[spectrumIndex]))*scaleFactor, 2.0f);
-            
-            /*
-            if (useBuffer)  {
-                penguin.transform.localScale = new Vector3(2.0f,  bandBuffer [band] * Mathf.Abs(Mathf.Log(spectrum[spectrumIndex]))*scaleFactor, 2.0f);   
-            }
-
-            if (!useBuffer)  {
-                penguin.transform.localScale = new Vector3(2.0f,  freqBand [band] * Mathf.Abs(Mathf.Log(spectrum[spectrumIndex]))*scaleFactor, 2.0f);   
-                //penguin.transform.localScale = new Vector3(2.0f,  bandBuffer * Mathf.Abs(Mathf.Log(spectrum[spectrumIndex]))*scaleFactor, 1.0f);
-            }
-            */
-
         }
-        
-        BandBuffer();
-
-     
-        
     }
 
     void BandBuffer()
     {
-        for (int g = 0; g < 64; ++g) {
-            if (freqBand [g] > bandBuffer [g]){
-                bandBuffer [g] = freqBand [g] ;
-                bufferDecrease [g] = 0.005f;
+        for (int index = 0; index < 64; ++index) {
+            // if value is higher than buffer value, increase buffer value
+            if (freqBand [index] > bandBuffer [index]){
+                bandBuffer [index] = freqBand [index];
+                bufferDecrease [index] = bufferDecreaseValue;
             }
-            if (freqBand [g] < bandBuffer [g]){
-                bandBuffer [g] -= bufferDecrease [g];
-                bufferDecrease [g] *= 1.2f;
+            // if value if lower than buffer value, decrease bufer value by bufferDecrease value.
+            if (freqBand [index] < bandBuffer [index]){
+                bandBuffer [index] -= bufferDecrease [index];
+                bufferDecrease [index] *= bufferDecreaseMultiplier;
             }
-
         }
     }
-
-    void ChangeColors()
-    {
-         if (Input.GetKeyDown(KeyCode.R))
-        {
-            GetComponent<Renderer>().material.color = Color.red;
-        }
-    }
-    
- }
+}
