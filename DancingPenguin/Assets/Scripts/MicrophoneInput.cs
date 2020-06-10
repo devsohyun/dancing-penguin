@@ -19,20 +19,18 @@ public class MicrophoneInput : MonoBehaviour
 
     //Buffer
     
-    public static float[] freqBand = new float[8];
-    public static float[] bandBuffer = new float[8];
-    private float[] bufferDecrease = new float[8]; 
+    public static float[] freqBand = new float[64];
+    public static float[] bandBuffer = new float[64];
+    private float[] bufferDecrease = new float[64]; 
     public bool useBuffer;
     public int band;
 
-
-    
 
     public GameObject box;
     public GameObject penguin;
 
     [Header("Settings")]
-    public float scaleFactor = -2.0f;
+    public float scaleFactor = 2.0f;
     
     public int spectrumIndex = 14;
 
@@ -68,13 +66,10 @@ public class MicrophoneInput : MonoBehaviour
                 audioSource.outputAudioMixerGroup = mixerGroupMicrophone; //when sounds makes no eco from me
                 //get microphone at auidoClip
                 audioSource.clip = Microphone.Start(Microphone.devices[0].ToString(), true, 10, audioSampleRate);
-                //GetComponent<Renderer>().material.color = Color.red;
-            
             }
             else
             {
                 useMicrophone = false;
-               
             }
         }
         //when no sound, music starts again            
@@ -87,12 +82,11 @@ public class MicrophoneInput : MonoBehaviour
      audioSource.Play();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(audioSource != null){
             
-            float[] spectrum = new float[512];
+            float[] spectrum = new float[64];
 
             audioSource.GetSpectrumData(spectrum, 0, FFTWindow.Rectangular);
 
@@ -102,7 +96,6 @@ public class MicrophoneInput : MonoBehaviour
                 // Debug.DrawLine(new Vector3(i - 1, Mathf.Log(spectrum[i - 1]) + 10, 2), new Vector3(i, Mathf.Log(spectrum[i]) + 10, 2), Color.cyan);
                 // Debug.DrawLine(new Vector3(Mathf.Log(i - 1), spectrum[i - 1] - 10, 1), new Vector3(Mathf.Log(i), spectrum[i] - 10, 1), Color.green);
                 // Debug.DrawLine(new Vector3(Mathf.Log(i - 1), Mathf.Log(spectrum[i - 1]), 3), new Vector3(Mathf.Log(i), Mathf.Log(spectrum[i]), 3), Color.blue);
-            
             }
 
             penguin.transform.localScale = new Vector3(2.0f, Mathf.Abs(Mathf.Log(spectrum[spectrumIndex]))*scaleFactor, 2.0f);
@@ -128,7 +121,7 @@ public class MicrophoneInput : MonoBehaviour
 
     void BandBuffer()
     {
-        for (int g = 0; g < 8; ++g) {
+        for (int g = 0; g < 64; ++g) {
             if (freqBand [g] > bandBuffer [g]){
                 bandBuffer [g] = freqBand [g] ;
                 bufferDecrease [g] = 0.005f;

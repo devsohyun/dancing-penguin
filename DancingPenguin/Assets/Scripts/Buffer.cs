@@ -12,20 +12,21 @@ public class Buffer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        Debug.Log("hi");
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (useBuffer)  {
-                penguin.transform.localScale = new Vector3(penguin.transform.localScale.x, (MicrophoneInput.bandBuffer [band] * scaleMultiplier) + startScale, penguin.transform.localScale.z);   
-            }
+        if (useBuffer)
+        {
+            penguin.transform.localScale = new Vector3(penguin.transform.localScale.x, (MicrophoneInput.bandBuffer[band] * scaleMultiplier) + startScale, penguin.transform.localScale.z);
+        }
+        else
+        {
+            penguin.transform.localScale = new Vector3(penguin.transform.localScale.x, (MicrophoneInput.freqBand[band] * scaleMultiplier) + startScale, penguin.transform.localScale.z);
+            //penguin.transform.localScale = new Vector3(2.0f,  bandBuffer * Mathf.Abs(Mathf.Log(spectrum[spectrumIndex]))*scaleFactor, 1.0f);
+        }
 
-            if (!useBuffer)  {
-                penguin.transform.localScale = new Vector3(penguin.transform.localScale.x, (MicrophoneInput.freqBand [band] * scaleMultiplier) + startScale, penguin.transform.localScale.z);   
-                //penguin.transform.localScale = new Vector3(2.0f,  bandBuffer * Mathf.Abs(Mathf.Log(spectrum[spectrumIndex]))*scaleFactor, 1.0f);
-            }
-        
     }
 }
